@@ -1,3 +1,11 @@
+/**
+ * Constants, configuration, and baseline domain data for Site Director simulation.
+ *
+ * This module serves as the single source of truth for game configuration,
+ * staff roster attributes, action definitions, and default game state.
+ * Modifying these values directly affects simulation behavior and difficulty.
+ */
+
 export const STORAGE_KEY = 'site-director-mvp-state-v0';
 
 export const ACTION_LIMIT_PER_CYCLE = 3;
@@ -6,6 +14,16 @@ export const DEFAULT_SEED = 130021;
 
 export const ROLES = ['research', 'security', 'engineering'];
 
+/**
+ * Initial staff roster for a new game.
+ *
+ * Attributes:
+ * - competence (0-100): Raw ability at their current role; affects experiment knowledge gain
+ * - caution (0-100): Tendency toward risk-averse decisions; reduces stress delta and drift impact
+ * - stress (0-100): Current fatigue level; increases with high-intensity actions, affects decision quality
+ *
+ * Staff are balanced across roles to encourage varied strategies in early cycles.
+ */
 export const STAFF_BASE = [
   { id: 's-1', name: 'Dr. Vale', role: 'research', competence: 76, caution: 58, stress: 22 },
   { id: 's-2', name: 'Dr. Morrow', role: 'research', competence: 69, caution: 72, stress: 26 },

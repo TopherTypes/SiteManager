@@ -1,3 +1,20 @@
+/**
+ * UI rendering and event binding layer.
+ *
+ * Responsibilities:
+ * - Render all DOM elements: metrics, reports, action forms, status displays
+ * - Apply information obscuration: add noise to player-visible values based on drift level
+ * - Display risk assessments and thresholds to guide player decisions
+ *
+ * Design Philosophy:
+ * The UI intentionally displays approximations, not true internal values.
+ * As drift level increases, unreliability increases, reflecting the anomaly's
+ * destabilizing effects on observation and reporting accuracy.
+ *
+ * Example: If drift level is 50, the UI adds ±50/18 ≈ ±2.78% noise to
+ * displayed metrics, making high-drift scenarios feel chaotic and uncertain.
+ */
+
 import {
   ACTION_LIMIT_PER_CYCLE,
   EXPERIMENT_INTENSITY,
@@ -6,23 +23,57 @@ import {
   SAFEGUARDS
 } from './data.js';
 
+/**
+ * Convenience wrapper for document.getElementById.
+ *
+ * @param {string} id - DOM element ID
+ * @returns {Element} DOM element
+ */
 function byId(id) {
   return document.getElementById(id);
 }
 
+/**
+ * Format a value as a percentage, applying random noise to simulate
+ * measurement uncertainty.
+ *
+ * @param {number} value - True value (0-100)
+ * @param {number} noise - Random noise applied to the value for display
+ * @returns {string} Formatted percentage string (e.g., "42%")
+ */
 function percentWithNoise(value, noise) {
   const rough = Math.round(value + noise);
   return `${Math.max(0, Math.min(100, rough))}%`;
 }
 
+/**
+ * Classify stress level into visual categories.
+ *
+ * Thresholds:
+ * - high: >= 70 (critical staff fatigue; team decisions will degrade)
+ * - medium: 35-69 (manageable; monitor for escalation)
+ * - low: < 35 (optimal, no stress penalties active)
+ *
+ * @param {number} value - Stress level (0-100)
+ * @returns {string} Category: 'low', 'medium', or 'high'
+ */
 function stressBand(value) {
   if (value >= 70) return 'high';
   if (value >= 35) return 'medium';
   return 'low';
 }
 
+/**
+ * Render top metrics bar (cycle counter, stability, power, stress, research progress).
+ *
+ * Applies drift-based noise to simulated observation inaccuracy:
+ * High drift → low accuracy → large noise range displayed to player.
+ *
+ * @param {object} state - Current game state
+ */
 function renderTopMetrics(state) {
   const host = byId('top-metrics');
+  // Noise formula: higher drift = less reliable sensor data reported to player
   const approxNoise = state.anomaly.driftLevel / 18;
 
   host.innerHTML = [
@@ -39,6 +90,11 @@ function renderTopMetrics(state) {
     .join('');
 }
 
+/**
+ * Render the reports feed (last 16 reports in reverse chronological order).
+ *
+ * @param {object} state - Current game state
+ */
 function renderReports(state) {
   const host = byId('reports-feed');
   const items = state.reports.slice(-16).reverse();
@@ -50,11 +106,29 @@ function renderReports(state) {
     .join('');
 }
 
+/**
+ * Generate a risk assessment badge based on critical thresholds.
+ *
+ * Critical conditions (any ONE):
+ * - Containment Stability < 40% (facility losing structural integrity)
+ * - Containment Integrity < 45% (containment systems failing)
+ * - Drift Level > 70 (anomaly becoming unstable/unpredictable)
+ *
+ * @param {object} state - Current game state
+ * @returns {string} HTML badge: "Critical risk trend" or "Contained (watchlist)"
+ */
 function riskBadge(state) {
   const critical = state.site.containmentStability < 40 || state.site.containmentIntegrity < 45 || state.anomaly.driftLevel > 70;
   return critical ? '<span class="badge-danger">Critical risk trend</span>' : '<span class="badge-ok">Contained (watchlist)</span>';
 }
 
+/**
+ * Render anomaly and system status panel (center of three-panel layout).
+ *
+ * Displays: anomaly ID/name, risk posture, drift level, strain, pressure, integrity.
+ *
+ * @param {object} state - Current game state
+ */
 function renderCenterStatus(state) {
   const host = byId('center-status');
   host.innerHTML = `
@@ -75,6 +149,14 @@ function optionList(values, selected) {
     .join('');
 }
 
+/**
+ * Main render entry point: update all UI elements with current state.
+ *
+ * Called after every state change (input, cycle commit, reset).
+ * Re-renders all three panels: reports, anomaly status, and action forms.
+ *
+ * @param {object} state - Current game state
+ */
 export function renderUI(state) {
   renderTopMetrics(state);
   renderReports(state);

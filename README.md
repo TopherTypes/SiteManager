@@ -39,6 +39,10 @@ Core design tension:
 - `DECISIONS.md` — architecture and design decision log
 - `CHANGELOG.md` — Keep a Changelog history
 - `AGENTS.md` — repository automation and contribution guidance
+- `ROADMAP.md` — development roadmap (v0.2, v0.3, v1.0+ planning)
+- `DEVELOPING.md` — contributor guide for local development
+- `CONTRIBUTING.md` — contribution process and code style
+- `API.md` — complete module reference and formula documentation
 
 ## Running Locally
 
@@ -78,9 +82,30 @@ Non-goals for this baseline:
 - Story scripting framework
 - Heavy visual polish/animation
 
+## Development & Contribution
+
+Want to help develop SiteManager?
+
+- **DEVELOPING.md** — Local setup, common tasks, debugging tips
+- **CONTRIBUTING.md** — How to submit code, code style, commit format
+- **ROADMAP.md** — Feature planning for v0.2, v0.3, v1.0 and beyond
+- **API.md** — Complete module reference, state shape, formula documentation
+
+Contributors are welcome! See CONTRIBUTING.md for guidelines.
+
 ## Development Notes
 
 - Keep logic deterministic and testable.
 - Prefer small, reviewable extensions.
 - Preserve distinction between **true state** and **player-visible approximation**.
 - Document meaningful behavior changes in `CHANGELOG.md` and `SPEC.md`.
+
+## Deployment & Access
+
+This project is deployed to GitHub Pages via automated CI/CD.
+
+- **Live Site**: [sitemanager.github.io/sitemanager](https://tophertypes.github.io/sitemanager/)
+- **Automatic Deploys**: Push to `main` branch triggers build & deployment
+- **Status**: Deployment status is checked automatically on each commit
+
+For deployment details, see `.github/workflows/` directory.
