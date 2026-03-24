@@ -1,12 +1,25 @@
 :root {
-  --bg: #10141c;
-  --panel: #1a2230;
-  --text: #e7edf8;
-  --muted: #9aa8c0;
-  --accent: #74b0ff;
-  --danger: #ff8b8b;
-  --ok: #8ee39f;
-  --border: #2a3547;
+  /* Windows 95/98 Color Palette */
+  --bg-desktop: #008080;           /* Teal desktop wallpaper */
+  --panel-bg: #c0c0c0;             /* Beige/gray panel background */
+  --window-bg: #dfdfdf;            /* Light gray window background */
+  --text: #000000;                 /* Black text */
+  --text-muted: #808080;           /* Dark gray for muted text */
+  --text-light: #ffffff;           /* White highlights */
+  --border-dark: #808080;          /* Dark border for shadows */
+  --border-light: #ffffff;         /* Light border for highlights */
+  --border-edge: #0a0e27;          /* Frame edge */
+  --title-bar: #000080;            /* Deep blue title bar */
+  --title-text: #ffffff;           /* White text on title bar */
+  --accent: #0000ff;               /* Blue for hyperlinks/accents */
+  --ok: #008000;                   /* Green for ok status */
+  --danger: #ff0000;               /* Red for danger */
+
+  /* Button states */
+  --btn-bg: #c0c0c0;
+  --btn-shadow-light: #ffffff;
+  --btn-shadow-dark: #808080;
+  --btn-shadow-darkest: #000000;
 }
 
 * {
@@ -15,165 +28,509 @@
 
 body {
   margin: 0;
-  font-family: Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  background: var(--bg);
+  font-family: 'MS Sans Serif', Arial, Helvetica, sans-serif;
+  background: var(--bg-desktop);
   color: var(--text);
+  padding-bottom: 28px; /* Space for taskbar */
+  min-height: 100vh;
+  overflow: hidden;
 }
 
-h1,
-h2,
-h3,
-p {
+html {
+  height: 100vh;
+}
+
+h1, h2, h3, p {
   margin: 0;
 }
 
+/* ============================================
+   DESKTOP & LAYOUT
+   ============================================ */
+
+.desktop-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 28px; /* Leave room for taskbar */
+  background: var(--bg-desktop);
+  overflow: hidden;
+}
+
+/* ============================================
+   WINDOW STYLING (Floating Windows)
+   ============================================ */
+
+.window {
+  position: absolute;
+  background: var(--panel-bg);
+  border: 2px solid;
+  border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
+  box-shadow: 1px 1px 0 var(--border-darkest, #000), -1px -1px 0 var(--border-light);
+  min-width: 250px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  z-index: 100;
+}
+
+.window.minimized {
+  display: none;
+}
+
+.window.focused {
+  z-index: 1000;
+}
+
+/* Window Title Bar */
+.window-title-bar {
+  background: linear-gradient(to right, #000080, #1084d7);
+  color: var(--title-text);
+  padding: 1px 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: move;
+  user-select: none;
+  font-weight: bold;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.window-title {
+  flex: 1;
+  padding: 2px 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.window-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.window-btn {
+  width: 16px;
+  height: 14px;
+  background: var(--panel-bg);
+  border: 1px solid;
+  border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text);
+  padding: 0;
+  min-width: unset;
+  user-select: none;
+  font-weight: bold;
+}
+
+.window-btn:active {
+  border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
+}
+
+/* Window Content Area */
+.window-content {
+  flex: 1;
+  overflow: auto;
+  padding: 3px;
+  background: var(--window-bg);
+  border: 1px inset;
+  border-color: var(--border-light) var(--border-dark);
+}
+
+/* ============================================
+   TOP BAR / SYSTEM STATUS
+   ============================================ */
+
 .top-bar {
-  padding: 0.8rem 1rem;
-  border-bottom: 1px solid var(--border);
+  background: var(--panel-bg);
+  border-bottom: 2px outset;
+  border-color: var(--border-light) var(--border-dark);
+  padding: 2px 4px;
   display: grid;
-  gap: 0.5rem;
+  gap: 2px;
 }
 
 .top-bar h1 {
-  font-size: 1.05rem;
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 2px;
 }
 
 .metric-strip {
   display: flex;
-  gap: 0.75rem;
+  gap: 4px;
   flex-wrap: wrap;
+  font-size: 11px;
 }
 
 .metric {
-  border: 1px solid var(--border);
-  background: var(--panel);
-  border-radius: 6px;
-  padding: 0.4rem 0.6rem;
-  min-width: 140px;
+  background: var(--window-bg);
+  border: 1px;
+  border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
+  padding: 2px 4px;
+  min-width: 120px;
+  font-family: 'Courier New', monospace;
 }
 
 .metric .label {
-  color: var(--muted);
-  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: bold;
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  min-height: calc(100vh - 90px);
+.metric .value {
+  color: var(--text);
+  font-weight: bold;
 }
 
-.panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.75rem;
-  display: grid;
-  gap: 0.75rem;
-  align-content: start;
+/* ============================================
+   BUTTONS & FORM ELEMENTS
+   ============================================ */
+
+button {
+  background: var(--btn-bg);
+  border: 2px outset;
+  border-color: var(--btn-shadow-light) var(--btn-shadow-dark);
+  color: var(--text);
+  padding: 3px 12px;
+  cursor: pointer;
+  font-family: 'MS Sans Serif', Arial, sans-serif;
+  font-size: 11px;
+  user-select: none;
+  min-height: 22px;
+  min-width: 75px;
 }
 
-.reports-feed {
-  display: grid;
-  gap: 0.5rem;
-  max-height: 72vh;
-  overflow: auto;
-  padding-right: 0.25rem;
+button:hover {
+  background: #e0e0e0;
 }
 
-.report {
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
-  border-radius: 6px;
-  padding: 0.55rem;
-  background: rgba(255, 255, 255, 0.01);
+button:active {
+  border-style: inset;
+  border-color: var(--btn-shadow-dark) var(--btn-shadow-light);
 }
 
-.report .meta {
-  font-size: 0.75rem;
-  color: var(--muted);
+button:disabled {
+  color: #808080;
+  text-shadow: 1px 1px 0 var(--btn-shadow-light);
 }
 
-.data-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
+button.primary {
+  font-weight: bold;
 }
 
-.kv {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 0.45rem;
+/* Select Dropdowns */
+select {
+  background: var(--window-bg);
+  color: var(--text);
+  border: 2px inset;
+  border-color: var(--border-light) var(--border-dark);
+  padding: 2px 3px;
+  font-family: 'MS Sans Serif', Arial, sans-serif;
+  font-size: 11px;
+  cursor: pointer;
 }
 
-.kv .k {
-  color: var(--muted);
-  font-size: 0.75rem;
+/* Labels */
+label {
+  font-size: 11px;
+  color: var(--text);
+  display: block;
+  margin-bottom: 2px;
+  font-weight: normal;
 }
 
-.actions-grid {
-  display: grid;
-  gap: 0.5rem;
+/* Checkboxes */
+input[type="checkbox"] {
+  cursor: pointer;
+  width: 13px;
+  height: 13px;
+  margin-right: 4px;
+  vertical-align: middle;
 }
+
+/* ============================================
+   TASKBAR
+   ============================================ */
+
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: var(--panel-bg);
+  border-top: 2px outset;
+  border-color: var(--border-light) var(--border-dark);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 2px;
+  z-index: 2000;
+}
+
+.taskbar-start {
+  background: var(--btn-bg);
+  border: 2px outset;
+  border-color: var(--btn-shadow-light) var(--btn-shadow-dark);
+  padding: 2px 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 11px;
+  min-width: 50px;
+  text-align: center;
+}
+
+.taskbar-start:active {
+  border-style: inset;
+  border-color: var(--btn-shadow-dark) var(--btn-shadow-light);
+}
+
+.taskbar-separator {
+  width: 2px;
+  height: 22px;
+  border-right: 1px solid var(--border-dark);
+  border-left: 1px solid var(--border-light);
+  margin: 0 2px;
+}
+
+.taskbar-window-btn {
+  background: var(--btn-bg);
+  border: 2px outset;
+  border-color: var(--btn-shadow-light) var(--btn-shadow-dark);
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 11px;
+  flex-shrink: 0;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskbar-window-btn.active {
+  border-style: inset;
+  border-color: var(--btn-shadow-dark) var(--btn-shadow-light);
+}
+
+.taskbar-clock {
+  margin-left: auto;
+  padding: 2px 4px;
+  font-size: 11px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+/* ============================================
+   EMAIL INBOX TABLE
+   ============================================ */
+
+.email-list {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  background: var(--window-bg);
+}
+
+.email-list thead {
+  background: var(--panel-bg);
+  font-weight: bold;
+  border-bottom: 1px solid var(--text-muted);
+}
+
+.email-list th {
+  padding: 2px 4px;
+  text-align: left;
+  border-right: 1px solid var(--text-muted);
+  border-bottom: 2px outset;
+  border-color: var(--border-light) var(--border-dark);
+  user-select: none;
+}
+
+.email-list td {
+  padding: 2px 4px;
+  border-right: 1px solid #e0e0e0;
+  background: var(--window-bg);
+}
+
+.email-list tr:nth-child(even) {
+  background: #f0f0f0;
+}
+
+.email-list tr:hover {
+  background: #000080;
+  color: var(--title-text);
+}
+
+.email-list tr.unread {
+  font-weight: bold;
+}
+
+.email-from {
+  width: 15%;
+  font-weight: bold;
+}
+
+.email-subject {
+  width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.email-time {
+  width: 25%;
+  text-align: right;
+  font-family: 'Courier New', monospace;
+}
+
+/* ============================================
+   ACTION CARDS
+   ============================================ */
 
 .action-card {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 0.5rem;
+  background: var(--window-bg);
+  border: 1px inset;
+  border-color: var(--border-light) var(--border-dark);
+  padding: 4px;
   display: grid;
-  gap: 0.4rem;
+  gap: 4px;
+  margin-bottom: 4px;
 }
 
-label,
-select {
-  font-size: 0.9rem;
-}
-
-select {
-  width: 100%;
-  background: #0f1520;
+.action-card h3 {
+  font-size: 11px;
+  font-weight: bold;
+  margin: 0;
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.3rem;
+}
+
+.action-card .form-group {
+  display: grid;
+  gap: 2px;
 }
 
 .action-summary {
-  font-size: 0.86rem;
-  color: var(--muted);
-  min-height: 2.2rem;
+  font-size: 10px;
+  color: var(--text-muted);
+  min-height: 2rem;
+  font-family: 'Courier New', monospace;
 }
 
 .button-row {
   display: flex;
-  gap: 0.5rem;
+  gap: 4px;
+  margin-top: 4px;
 }
 
-button {
-  border: 1px solid var(--border);
-  background: #131a26;
+/* ============================================
+   DATA DISPLAY
+   ============================================ */
+
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  background: var(--window-bg);
+}
+
+.kv {
+  background: var(--panel-bg);
+  border: 1px inset;
+  border-color: var(--border-light) var(--border-dark);
+  padding: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+.kv .k {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.kv .v {
   color: var(--text);
-  padding: 0.45rem 0.65rem;
-  border-radius: 6px;
-  cursor: pointer;
+  font-weight: bold;
 }
 
-button.primary {
-  border-color: var(--accent);
+/* ============================================
+   STATUS INDICATORS
+   ============================================ */
+
+.badge-ok {
+  color: var(--ok);
+  font-weight: bold;
 }
 
 .badge-danger {
   color: var(--danger);
+  font-weight: bold;
 }
 
-.badge-ok {
-  color: var(--ok);
+/* ============================================
+   SCROLLBARS
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
 }
 
-@media (max-width: 1050px) {
-  .layout {
-    grid-template-columns: 1fr;
+::-webkit-scrollbar-track {
+  background: var(--window-bg);
+  border: 1px inset;
+  border-color: var(--border-light) var(--border-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--panel-bg);
+  border: 1px outset;
+  border-color: var(--border-light) var(--border-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e0e0e0;
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--panel-bg);
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
+.hidden {
+  display: none;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 800px) {
+  body {
+    font-size: 10px;
+  }
+
+  button {
+    min-width: 60px;
+    padding: 2px 8px;
+  }
+
+  .window {
+    min-width: 200px;
+    min-height: 120px;
   }
 }
