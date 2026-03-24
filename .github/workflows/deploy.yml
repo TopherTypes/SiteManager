@@ -1,0 +1,71 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Validate HTML/CSS/JS syntax
+        run: |
+          # Check that key files exist and are valid
+          test -f index.html || (echo "index.html not found" && exit 1)
+          test -f src/styles.css || (echo "src/styles.css not found" && exit 1)
+          test -f src/main.js || (echo "src/main.js not found" && exit 1)
+
+          # Basic HTML validation (check for common issues)
+          grep -q "<!doctype html>" index.html || grep -q "<!DOCTYPE html>" index.html || (echo "HTML doctype missing" && exit 1)
+          grep -q "<html" index.html || (echo "HTML tag missing" && exit 1)
+
+          # Check that ES modules are correctly structured
+          grep -q "type=\"module\"" index.html || (echo "ES module script tag not found" && exit 1)
+
+      - name: Check module imports
+        run: |
+          # Verify that main entry point exists and imports are correct
+          test -f src/main.js || exit 1
+          grep -q "import.*from.*state.js" src/main.js || (echo "Missing state.js import" && exit 1)
+          grep -q "import.*from.*sim.js" src/main.js || (echo "Missing sim.js import" && exit 1)
+          grep -q "import.*from.*ui.js" src/main.js || (echo "Missing ui.js import" && exit 1)
+
+          # Check that all module files exist
+          test -f src/state.js || exit 1
+          test -f src/sim.js || exit 1
+          test -f src/ui.js || exit 1
+          test -f src/data.js || exit 1
+          test -f src/utils/rng.js || exit 1
+
+      - name: Verify localStorage API compatibility
+        run: |
+          # Ensure state.js uses localStorage correctly
+          grep -q "localStorage.getItem" src/state.js || (echo "localStorage.getItem not found" && exit 1)
+          grep -q "localStorage.setItem" src/state.js || (echo "localStorage.setItem not found" && exit 1)
+          grep -q "localStorage.removeItem" src/state.js || (echo "localStorage.removeItem not found" && exit 1)
+
+      - name: List deployment files
+        run: |
+          echo "Files to be deployed:"
+          find . -name "*.html" -o -name "*.js" -o -name "*.css" -o -name "*.json" -o -name "*.md" | grep -v node_modules | sort
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          cname: sitemanager.example.com  # Optional: add your custom domain if available
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Deployment successful!"
+          echo "Site will be available at: https://tophertypes.github.io/sitemanager/"
