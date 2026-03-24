@@ -74,7 +74,10 @@ function renderReports(state) {
   const items = state.reports.slice(-16).reverse();
 
   host.innerHTML = items
-    .map((report) => {
+    .map((report, displayIndex) => {
+      // Calculate actual index in state.reports array
+      const actualIndex = state.reports.length - 1 - displayIndex;
+
       // Extract first few words as subject line
       const words = report.text.split(' ');
       const subject = words.slice(0, Math.min(5, words.length)).join(' ') + (words.length > 5 ? '...' : '');
@@ -88,7 +91,7 @@ function renderReports(state) {
       const from = fromMap[report.source] || report.source.toUpperCase();
 
       return `
-        <tr class="email-row" data-cycle="${report.cycle}" title="${report.text}">
+        <tr class="email-row" data-cycle="${report.cycle}" data-report-index="${actualIndex}" title="${report.text}">
           <td class="email-from">${from}</td>
           <td class="email-subject">${subject}</td>
           <td class="email-time">C${report.cycle}</td>
@@ -277,9 +280,105 @@ export function raiseWindowToTop(windowEl) {
 }
 
 /**
+ * Store or restore window normal state for maximize/restore toggle.
+ */
+function getWindowNormalState(windowEl) {
+  const stored = windowEl.dataset.normalState;
+  if (stored) {
+    return JSON.parse(stored);
+  }
+  // If not stored yet, capture current state
+  const rect = windowEl.getBoundingClientRect();
+  const state = {
+    left: windowEl.style.left,
+    top: windowEl.style.top,
+    width: windowEl.style.width,
+    height: windowEl.style.height
+  };
+  windowEl.dataset.normalState = JSON.stringify(state);
+  return state;
+}
+
+/**
+ * Save window normal state.
+ */
+function saveWindowNormalState(windowEl) {
+  const state = {
+    left: windowEl.style.left,
+    top: windowEl.style.top,
+    width: windowEl.style.width,
+    height: windowEl.style.height
+  };
+  windowEl.dataset.normalState = JSON.stringify(state);
+}
+
+/**
+ * Toggle window between maximized and normal state.
+ */
+function toggleWindowMaximized(windowEl) {
+  if (windowEl.classList.contains('maximized')) {
+    // Restore to normal state
+    const normalState = getWindowNormalState(windowEl);
+    windowEl.style.left = normalState.left;
+    windowEl.style.top = normalState.top;
+    windowEl.style.width = normalState.width;
+    windowEl.style.height = normalState.height;
+    windowEl.classList.remove('maximized');
+  } else {
+    // Maximize: save current state first, then apply maximize dimensions
+    saveWindowNormalState(windowEl);
+    windowEl.style.width = '80vw';
+    windowEl.style.height = '80vh';
+    windowEl.style.left = '10vw';
+    windowEl.style.top = '40px';
+    windowEl.classList.add('maximized');
+  }
+}
+
+/**
+ * Open and display message detail window with given report.
+ */
+export function openMessageDetail(reportIndex, state) {
+  const report = state.reports[reportIndex];
+  if (!report) return;
+
+  const detailWindow = byId('message-detail-window');
+
+  // Update detail window content
+  const fromMap = {
+    'Research': 'RESEARCH',
+    'Security': 'SEC OPS',
+    'Engineering': 'ENG',
+    'Directorate Log': 'DIRECTORATE',
+    'System Intake': 'SYSTEM'
+  };
+  const from = fromMap[report.source] || report.source.toUpperCase();
+
+  byId('message-detail-title').textContent = `Message Details — ${from}`;
+  byId('message-detail-from').textContent = from;
+  byId('message-detail-cycle').textContent = `C${report.cycle}`;
+  byId('message-detail-content').textContent = report.text;
+
+  // Show window if minimized
+  if (detailWindow.classList.contains('minimized')) {
+    detailWindow.classList.remove('minimized');
+    const taskbarBtn = document.querySelector('[data-toggle-window="message-detail-window"]');
+    if (taskbarBtn) taskbarBtn.classList.add('active');
+  }
+
+  // Raise to top
+  raiseWindowToTop(detailWindow);
+}
+
+/**
  * Initialize window control buttons.
  */
 export function initializeWindowControls() {
+  // Store initial window states for restoration
+  document.querySelectorAll('.window').forEach(windowEl => {
+    getWindowNormalState(windowEl);
+  });
+
   // Minimize/close/maximize buttons
   document.querySelectorAll('.window-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -298,11 +397,7 @@ export function initializeWindowControls() {
         const taskbarBtn = document.querySelector(`[data-toggle-window="${windowId}-window"]`);
         if (taskbarBtn) taskbarBtn.classList.remove('active');
       } else if (action === 'maximize') {
-        // Simple maximization (could be enhanced)
-        windowEl.style.width = '80vw';
-        windowEl.style.height = '80vh';
-        windowEl.style.left = '10vw';
-        windowEl.style.top = '40px';
+        toggleWindowMaximized(windowEl);
       }
     });
   });
@@ -323,6 +418,22 @@ export function initializeWindowControls() {
         btn.classList.remove('active');
       }
     });
+  });
+
+  // Email row click handler for message details
+  document.addEventListener('click', (e) => {
+    const emailRow = e.target.closest('.email-row');
+    if (emailRow) {
+      const reportIndex = parseInt(emailRow.dataset.reportIndex);
+      if (!isNaN(reportIndex)) {
+        // Note: We need to get state from somewhere - will be called from main.js
+        // For now, we'll store it in a way that main.js can pass it
+        const event = new CustomEvent('message-row-clicked', {
+          detail: { reportIndex }
+        });
+        document.dispatchEvent(event);
+      }
+    }
   });
 }
 

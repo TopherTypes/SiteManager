@@ -122,6 +122,26 @@
           </div>
         </div>
       </div>
+
+      <!-- Message Detail Window -->
+      <div id="message-detail-window" class="window minimized" style="left: 650px; top: 100px; width: 600px; height: 400px;">
+        <div class="window-title-bar">
+          <div class="window-title" id="message-detail-title">Message Details</div>
+          <div class="window-controls">
+            <button class="window-btn" data-action="minimize" data-window="message-detail">_</button>
+            <button class="window-btn" data-action="close" data-window="message-detail">×</button>
+          </div>
+        </div>
+        <div class="window-content">
+          <div class="message-detail-header">
+            <div class="message-meta-row">
+              <div class="meta-item"><span class="meta-label">FROM:</span> <span id="message-detail-from">—</span></div>
+              <div class="meta-item"><span class="meta-label">CYCLE:</span> <span id="message-detail-cycle">—</span></div>
+            </div>
+          </div>
+          <div class="message-detail-content" id="message-detail-content"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Taskbar -->
@@ -135,6 +155,7 @@
       <button class="taskbar-window-btn" data-toggle-window="protocol-window">⚙️ Protocol</button>
       <button class="taskbar-window-btn" data-toggle-window="clarification-window">❓ Clarify</button>
       <button class="taskbar-window-btn" data-toggle-window="control-window">🎮 Control</button>
+      <button class="taskbar-window-btn" data-toggle-window="message-detail-window">📖 Details</button>
       <div class="taskbar-clock" id="taskbar-time">12:00</div>
     </div>
 

@@ -17,7 +17,7 @@
 
 import { loadState, resetState, saveState } from './state.js';
 import { simulateCycle } from './sim.js';
-import { renderUI, initializeWindowDragging, initializeWindowControls, startClockUpdates } from './ui.js';
+import { renderUI, initializeWindowDragging, initializeWindowControls, startClockUpdates, openMessageDetail } from './ui.js';
 
 let state = loadState();
 
@@ -81,6 +81,11 @@ function rerenderAndBind() {
   // Initialize window management
   initializeWindowControls();
   initializeWindowDragging();
+
+  // Handle message detail window opening
+  document.addEventListener('message-row-clicked', (e) => {
+    openMessageDetail(e.detail.reportIndex, state);
+  });
 }
 
 rerenderAndBind();
