@@ -17,7 +17,7 @@
 
 import { loadState, resetState, saveState } from './state.js';
 import { simulateCycle } from './sim.js';
-import { renderUI } from './ui.js';
+import { renderUI, initializeWindowDragging, initializeWindowControls, startClockUpdates } from './ui.js';
 
 let state = loadState();
 
@@ -77,6 +77,11 @@ function rerenderAndBind() {
     saveState(state);
     rerenderAndBind();
   });
+
+  // Initialize window management
+  initializeWindowControls();
+  initializeWindowDragging();
 }
 
 rerenderAndBind();
+startClockUpdates();

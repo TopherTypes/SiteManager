@@ -7,32 +7,136 @@
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
-    <header class="top-bar">
-      <h1>Anomalous Operations Bureau: Site Director</h1>
-      <div id="top-metrics" class="metric-strip"></div>
-    </header>
+    <div class="desktop-container">
+      <!-- Top System Status Bar -->
+      <header class="top-bar">
+        <h1>SYSTEM: Facility Briefing Terminal</h1>
+        <div id="top-metrics" class="metric-strip"></div>
+      </header>
 
-    <main class="layout">
-      <section class="panel left-panel">
-        <h2>Reports</h2>
-        <div id="reports-feed" class="reports-feed" aria-live="polite"></div>
-      </section>
-
-      <section class="panel center-panel">
-        <h2>Anomaly + Systems</h2>
-        <div id="center-status"></div>
-      </section>
-
-      <section class="panel right-panel">
-        <h2>Decisions</h2>
-        <div id="actions"></div>
-        <div id="action-summary" class="action-summary"></div>
-        <div class="button-row">
-          <button id="commit-cycle" class="primary">Commit Cycle</button>
-          <button id="reset-save">Reset Save</button>
+      <!-- Inbox Window (Reports as Emails) -->
+      <div id="inbox-window" class="window" style="left: 20px; top: 70px; width: 550px; height: 400px;">
+        <div class="window-title-bar">
+          <div class="window-title">Facility Messages</div>
+          <div class="window-controls">
+            <button class="window-btn" data-action="minimize" data-window="inbox">_</button>
+            <button class="window-btn" data-action="maximize" data-window="inbox">□</button>
+            <button class="window-btn" data-action="close" data-window="inbox">×</button>
+          </div>
         </div>
-      </section>
-    </main>
+        <div class="window-content">
+          <table class="email-list">
+            <thead>
+              <tr>
+                <th class="email-from">FROM</th>
+                <th class="email-subject">SUBJECT</th>
+                <th class="email-time">TIME</th>
+              </tr>
+            </thead>
+            <tbody id="reports-feed"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Anomaly Status Window -->
+      <div id="status-window" class="window" style="left: 600px; top: 70px; width: 400px; height: 300px;">
+        <div class="window-title-bar">
+          <div class="window-title">Anomaly Status</div>
+          <div class="window-controls">
+            <button class="window-btn" data-action="minimize" data-window="status">_</button>
+            <button class="window-btn" data-action="close" data-window="status">×</button>
+          </div>
+        </div>
+        <div class="window-content">
+          <div id="center-status"></div>
+        </div>
+      </div>
+
+      <!-- Decision Windows -->
+      <div id="experiment-window" class="window" style="left: 30px; top: 500px; width: 280px; min-height: 200px;">
+        <div class="window-title-bar">
+          <div class="window-title">Authorize Experiment</div>
+          <div class="window-controls">
+            <button class="window-btn" data-action="minimize" data-window="experiment">_</button>
+            <button class="window-btn" data-action="close" data-window="experiment">×</button>
+          </div>
+        </div>
+        <div class="window-content">
+          <div id="actions-experiment" data-card="authorize-experiment"></div>
+        </div>
+      </div>
+
+      <div id="staff-window" class="window" style="left: 330px; top: 500px; width: 280px; min-height: 200px;">
+        <div class="window-title-bar">
+          <div class="window-title">Reassign Staff</div>
+          <div class="window-controls">
+            <button class="window-btn" data-action="minimize" data-window="staff">_</button>
+            <button class="window-btn" data-action="close" data-window="staff">×</button>
+          </div>
+        </div>
+        <div class="window-content">
+          <div id="actions-staff" data-card="reassign-staff"></div>
+        </div>
+      </div>
+
+      <div id="protocol-window" class="window" style="left: 630px; top: 500px; width: 280px; min-height: 200px;">
+        <div class="window-title-bar">
+          <div class="window-title">Adjust Protocol</div>
+          <div class="window-controls">
+            <button class="window-btn" data-action="minimize" data-window="protocol">_</button>
+            <button class="window-btn" data-action="close" data-window="protocol">×</button>
+          </div>
+        </div>
+        <div class="window-content">
+          <div id="actions-protocol" data-card="adjust-protocol"></div>
+        </div>
+      </div>
+
+      <div id="clarification-window" class="window" style="left: 930px; top: 500px; width: 280px; min-height: 120px;">
+        <div class="window-title-bar">
+          <div class="window-title">Request Clarification</div>
+          <div class="window-controls">
+            <button class="window-btn" data-action="minimize" data-window="clarification">_</button>
+            <button class="window-btn" data-action="close" data-window="clarification">×</button>
+          </div>
+        </div>
+        <div class="window-content">
+          <div id="actions-clarification" data-card="request-clarification"></div>
+        </div>
+      </div>
+
+      <!-- Control Panel Window -->
+      <div id="control-window" class="window" style="left: 30px; top: 750px; width: 600px;">
+        <div class="window-title-bar">
+          <div class="window-title">Control Panel</div>
+          <div class="window-controls">
+            <button class="window-btn" data-action="minimize" data-window="control">_</button>
+            <button class="window-btn" data-action="close" data-window="control">×</button>
+          </div>
+        </div>
+        <div class="window-content">
+          <div id="action-summary" class="action-summary"></div>
+          <div class="button-row">
+            <button id="commit-cycle" class="primary">COMMIT CYCLE</button>
+            <button id="reset-save">RESET SAVE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+      <div class="taskbar-start">Start</div>
+      <div class="taskbar-separator"></div>
+      <button class="taskbar-window-btn active" data-toggle-window="inbox-window">📧 Messages</button>
+      <button class="taskbar-window-btn" data-toggle-window="status-window">ℹ️ Status</button>
+      <button class="taskbar-window-btn" data-toggle-window="experiment-window">⚗️ Experiment</button>
+      <button class="taskbar-window-btn" data-toggle-window="staff-window">👥 Staff</button>
+      <button class="taskbar-window-btn" data-toggle-window="protocol-window">⚙️ Protocol</button>
+      <button class="taskbar-window-btn" data-toggle-window="clarification-window">❓ Clarify</button>
+      <button class="taskbar-window-btn" data-toggle-window="control-window">🎮 Control</button>
+      <div class="taskbar-clock" id="taskbar-time">12:00</div>
+    </div>
 
     <script type="module" src="./src/main.js"></script>
   </body>
