@@ -67,13 +67,14 @@ h1, h2, h3, p {
   background: var(--panel-bg);
   border: 2px solid;
   border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
-  box-shadow: 1px 1px 0 var(--border-darkest, #000), -1px -1px 0 var(--border-light);
+  box-shadow: inset 1px 1px 0 var(--border-light), inset -1px -1px 0 var(--border-dark);
   min-width: 250px;
   min-height: 150px;
   display: flex;
   flex-direction: column;
   font-size: 11px;
   z-index: 100;
+  font-family: 'MS Sans Serif', Arial, Helvetica, sans-serif;
 }
 
 .window.minimized {
@@ -257,6 +258,13 @@ input[type="checkbox"] {
   height: 13px;
   margin-right: 4px;
   vertical-align: middle;
+  accent-color: var(--accent);
+}
+
+/* Form groups */
+.form-group {
+  display: grid;
+  gap: 2px;
 }
 
 /* ============================================
