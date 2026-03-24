@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Site Director — MVP Baseline</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <header class="top-bar">
+      <h1>Anomalous Operations Bureau: Site Director</h1>
+      <div id="top-metrics" class="metric-strip"></div>
+    </header>
+
+    <main class="layout">
+      <section class="panel left-panel">
+        <h2>Reports</h2>
+        <div id="reports-feed" class="reports-feed" aria-live="polite"></div>
+      </section>
+
+      <section class="panel center-panel">
+        <h2>Anomaly + Systems</h2>
+        <div id="center-status"></div>
+      </section>
+
+      <section class="panel right-panel">
+        <h2>Decisions</h2>
+        <div id="actions"></div>
+        <div id="action-summary" class="action-summary"></div>
+        <div class="button-row">
+          <button id="commit-cycle" class="primary">Commit Cycle</button>
+          <button id="reset-save">Reset Save</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
