@@ -81,6 +81,10 @@ h1, h2, h3, p {
   display: none;
 }
 
+.window.maximized {
+  /* Visual feedback for maximized state can be added here if desired */
+}
+
 .window.focused {
   z-index: 1000;
 }
@@ -375,6 +379,10 @@ input[type="checkbox"] {
   background: #f0f0f0;
 }
 
+.email-row {
+  cursor: pointer;
+}
+
 .email-list tr:hover {
   background: #000080;
   color: var(--title-text);
@@ -400,6 +408,43 @@ input[type="checkbox"] {
   width: 25%;
   text-align: right;
   font-family: 'Courier New', monospace;
+}
+
+/* ============================================
+   MESSAGE DETAIL WINDOW
+   ============================================ */
+
+.message-detail-header {
+  padding: 4px;
+  border-bottom: 1px solid var(--text-muted);
+  background: var(--panel-bg);
+}
+
+.message-meta-row {
+  display: flex;
+  gap: 16px;
+  font-size: 10px;
+}
+
+.meta-item {
+  display: flex;
+  gap: 4px;
+}
+
+.meta-label {
+  font-weight: bold;
+  color: var(--text-muted);
+}
+
+.message-detail-content {
+  padding: 8px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--text);
+  overflow-y: auto;
 }
 
 /* ============================================
